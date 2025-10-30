@@ -1,0 +1,10 @@
+<svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo transparente -->
+  
+  <!-- Cruz blanca más grande para adaptive icon -->
+  <!-- Barra vertical -->
+  <rect x="341" y="205" width="342" height="614" fill="white"/>
+  
+  <!-- Barra horizontal -->
+  <rect x="205" y="341" width="614" height="342" fill="white"/>
+</svg>

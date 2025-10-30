@@ -1,0 +1,14 @@
+<svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo verde farmacia -->
+  <rect width="1024" height="1024" fill="#3B693D"/>
+  
+  <!-- Cruz blanca -->
+  <!-- Barra vertical -->
+  <rect x="384" y="256" width="256" height="512" fill="white"/>
+  
+  <!-- Barra horizontal -->
+  <rect x="256" y="384" width="512" height="256" fill="white"/>
+  
+  <!-- Círculo pequeño en el centro (opcional) -->
+  <circle cx="512" cy="512" r="48" fill="#3B693D"/>
+</svg>
