@@ -62,7 +62,7 @@ class _AboutScreenState extends State<AboutScreen> {
               // Versión
               if (_version.isNotEmpty)
                 Text(
-                  'Versión $_version ($_buildNumber)',
+                  'Versión $_version (build $_buildNumber)',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey.shade600,
                   ),
@@ -155,7 +155,7 @@ class _AboutScreenState extends State<AboutScreen> {
               
               // Información adicional
               Text(
-                'Desarrollada con Flutter',
+                'DuamIt',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Colors.grey.shade500,
                 ),

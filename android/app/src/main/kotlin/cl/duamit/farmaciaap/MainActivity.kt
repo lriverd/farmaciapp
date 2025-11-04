@@ -1,4 +1,4 @@
-package com.example.farmaciaap
+package cl.duamit.farmaciaap
 
 import io.flutter.embedding.android.FlutterActivity
 

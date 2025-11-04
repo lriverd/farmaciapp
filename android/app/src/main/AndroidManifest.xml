@@ -1,11 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Permisos necesarios -->
+    <!-- Permisos de Internet -->
     <uses-permission android:name="android.permission.INTERNET" />
+    
+    <!-- Permisos de ubicación para todas las versiones de Android -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     
     <application
-        android:label="farmaciaap"
+        android:label="Farmacias de turno"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

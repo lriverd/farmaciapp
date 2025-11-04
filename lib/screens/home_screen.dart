@@ -340,10 +340,9 @@ class _HomeScreenState extends State<HomeScreen> {
             });
             return;
           case LocationStatus.permissionDenied:
-            setState(() {
-              _errorMessage = 'Se requieren permisos de ubicación para encontrar farmacias cercanas.';
-            });
-            return;
+            // Intentar solicitar permiso automáticamente
+            // No mostramos error aquí, dejamos que getCurrentPosition() lo maneje
+            break;
           case LocationStatus.permissionDeniedPermanently:
             setState(() {
               _errorMessage = 'Los permisos de ubicación fueron denegados permanentemente. Por favor, actívalos en la configuración de la aplicación.';
@@ -358,7 +357,7 @@ class _HomeScreenState extends State<HomeScreen> {
             break;
         }
 
-        // Obtener ubicación
+        // Obtener ubicación (esto solicitará permisos si es necesario)
         position = await LocationService.getCurrentPosition();
         if (position == null) {
           setState(() {

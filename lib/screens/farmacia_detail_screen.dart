@@ -187,7 +187,7 @@ class FarmaciaDetailScreen extends StatelessWidget {
 
             // Botones de acción
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
