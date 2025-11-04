@@ -70,13 +70,17 @@ dev_dependencies:
   
   # Launcher icons
   flutter_launcher_icons: ^0.13.1
+  
+  # Native splash screen
+  flutter_native_splash: ^2.3.5
 
 # Configuración para generar iconos
 flutter_launcher_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/icon/icon.png"
+  image_path: "assets/icon/icon_chile.png"
+  # Icono con cruz de farmacia y bandera de Chile
   # Para Android, usamos el ícono completo sin adaptive para evitar problemas
   android_icon: "assets/icon/icon.png"
   min_sdk_android: 21
@@ -122,3 +126,20 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Configuración para splash screen nativo
+flutter_native_splash:
+  # Configuración para Android e iOS
+  color: "#E3F2FD"  # Color de fondo azul claro
+  image: assets/icon/icon_chile.png
+  android: true
+  ios: true
+  # Color adaptativo para modo oscuro
+  color_dark: "#1565C0"
+  image_dark: assets/icon/icon_chile.png
+  # Configuración de Android
+  android_12:
+    image: assets/icon/icon_chile.png
+    color: "#E3F2FD"
+    image_dark: assets/icon/icon_chile.png
+    color_dark: "#1565C0"

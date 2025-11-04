@@ -16,11 +16,11 @@ class AppTheme {
         secondary: secondaryColor,
         tertiary: accentColor,
       ),
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         elevation: 0,
         centerTitle: true,
-        backgroundColor: Colors.white,
-        foregroundColor: textColor,
+        backgroundColor: secondaryColor, // celeste claro
+        foregroundColor: accentColor, // azul profundo
         surfaceTintColor: Colors.transparent,
       ),
       cardTheme: CardThemeData(
@@ -29,6 +29,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
         ),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        color: Colors.white,
+        shadowColor: primaryColor.withOpacity(0.08),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -37,6 +39,9 @@ class AppTheme {
             borderRadius: BorderRadius.circular(12),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+          textStyle: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(

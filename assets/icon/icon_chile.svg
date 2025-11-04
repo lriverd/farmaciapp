@@ -1,0 +1,82 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradiente de fondo principal (azul celeste a azul oscuro) -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#4FA3D1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2874A6;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Gradiente para la cruz (brillo sutil) -->
+    <linearGradient id="crossGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F0F0F0;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Sombra suave para la cruz -->
+    <filter id="softShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="10"/>
+      <feOffset dx="0" dy="6" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.25"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Sombra para la bandera -->
+    <filter id="flagShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="1" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Fondo con bordes redondeados y gradiente rico -->
+  <rect width="1024" height="1024" rx="230" fill="url(#bgGradient)"/>
+  
+  <!-- Cruz blanca con gradiente y sombra -->
+  <g filter="url(#softShadow)">
+    <!-- Brazo vertical de la cruz -->
+    <rect x="412" y="240" width="200" height="544" rx="55" fill="url(#crossGradient)"/>
+    <!-- Brazo horizontal de la cruz -->
+    <rect x="240" y="412" width="544" height="200" rx="55" fill="url(#crossGradient)"/>
+  </g>
+  
+  <!-- Brillo superior en la cruz para efecto 3D -->
+  <rect x="412" y="240" width="200" height="180" rx="55" fill="white" opacity="0.25"/>
+  <rect x="240" y="412" width="544" height="80" rx="55" fill="white" opacity="0.2"/>
+  
+  <!-- Bandera de Chile en la esquina superior derecha con sombra -->
+  <g transform="translate(650, 180)" filter="url(#flagShadow)">
+    <!-- Fondo de la bandera con todas las esquinas redondeadas -->
+    <rect x="0" y="0" width="200" height="150" rx="15" fill="transparent"/>
+    
+    <!-- Clip path para aplicar esquinas redondeadas a toda la bandera -->
+    <clipPath id="flagClip">
+      <rect x="0" y="0" width="200" height="150" rx="15"/>
+    </clipPath>
+    
+    <g clip-path="url(#flagClip)">
+      <!-- Parte azul con estrella -->
+      <rect x="0" y="0" width="80" height="75" fill="#0033A0"/>
+      
+      <!-- Estrella blanca -->
+      <polygon points="40,18 46,35 64,35 50,45 55,62 40,52 25,62 30,45 16,35 34,35" fill="white"/>
+      
+      <!-- Parte blanca superior -->
+      <rect x="80" y="0" width="120" height="75" fill="white"/>
+      
+      <!-- Parte roja inferior -->
+      <rect x="0" y="75" width="200" height="75" fill="#D52B1E"/>
+    </g>
+  </g>
+</svg>

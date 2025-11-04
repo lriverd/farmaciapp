@@ -14,9 +14,9 @@ class AppConstants {
   static const double defaultRadius = 10.0;
   static const List<double> radiusOptions = [5.0, 10.0, 15.0, 20.0];
   
-  // Colors
-  static const int primaryColorValue = 0xFF4CAF50;
-  static const int secondaryColorValue = 0xFF2196F3;
-  static const int accentColorValue = 0xFFFF9800;
-  static const int textColorValue = 0xFF333333;
+  // Colors (paleta azul/celeste/blanco, estilo salud)
+  static const int primaryColorValue = 0xFF2196F3; // Azul hospital
+  static const int secondaryColorValue = 0xFFB3E5FC; // Celeste claro
+  static const int accentColorValue = 0xFF1565C0; // Azul profundo
+  static const int textColorValue = 0xFF1565C0; // Azul profundo para texto
 }

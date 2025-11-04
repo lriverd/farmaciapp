@@ -18,6 +18,8 @@ class FarmaciaCard extends StatelessWidget {
     final farmacia = farmaciaConDistancia.farmacia;
     
     return Card(
+      color: AppTheme.secondaryColor,
+      shadowColor: AppTheme.primaryColor.withOpacity(0.08),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -35,6 +37,7 @@ class FarmaciaCard extends StatelessWidget {
                       farmacia.localNombre,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
+                        color: AppTheme.accentColor,
                       ),
                     ),
                   ),
@@ -46,8 +49,15 @@ class FarmaciaCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.accentColor,
+                        color: AppTheme.primaryColor,
                         borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primaryColor.withOpacity(0.15),
+                            blurRadius: 8,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: const Text(
                         'DE TURNO',

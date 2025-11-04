@@ -21,7 +21,8 @@ class LoadingWidget extends StatelessWidget {
             height: size,
             child: CircularProgressIndicator(
               strokeWidth: 3,
-              color: Theme.of(context).colorScheme.primary,
+              color: Color(0xFF2196F3),
+              backgroundColor: Color(0xFFB3E5FC),
             ),
           ),
           if (message != null) ...[
@@ -29,7 +30,7 @@ class LoadingWidget extends StatelessWidget {
             Text(
               message!,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey.shade600,
+                color: Color(0xFF1565C0),
               ),
               textAlign: TextAlign.center,
             ),
