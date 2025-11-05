@@ -10,6 +10,12 @@
         android:label="Farmacias de turno"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        
+        <!-- Google AdMob App ID -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7060454650201968~4128813276"/>
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"

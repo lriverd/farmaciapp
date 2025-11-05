@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import '../services/location_service.dart';
 import '../services/farmacia_service.dart';
 import '../services/theme_service.dart';
+import '../services/ad_service.dart';
 import '../models/farmacia_con_distancia.dart';
 import '../utils/constants.dart';
 import 'farmacia_list_screen.dart';
@@ -22,9 +24,39 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _errorMessage;
   final TextEditingController _localidadController = TextEditingController();
   bool _useGeolocation = true;
+  
+  // Banner ad
+  BannerAd? _bannerAd;
+  bool _isBannerAdLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBannerAd();
+  }
+
+  /// Carga el anuncio banner
+  void _loadBannerAd() {
+    _bannerAd = AdService.createBannerAd(
+      onAdLoaded: (ad) {
+        setState(() {
+          _isBannerAdLoaded = true;
+        });
+      },
+      onAdFailedToLoad: (ad, error) {
+        ad.dispose();
+        setState(() {
+          _isBannerAdLoaded = false;
+        });
+      },
+    );
+    
+    _bannerAd?.load();
+  }
 
   @override
   void dispose() {
+    _bannerAd?.dispose();
     _localidadController.dispose();
     super.dispose();
   }
@@ -308,6 +340,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 24),
+              
+              // Banner publicitario
+              if (_isBannerAdLoaded && _bannerAd != null)
+                Center(
+                  child: Container(
+                    width: _bannerAd!.size.width.toDouble(),
+                    height: _bannerAd!.size.height.toDouble(),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: isDarkMode 
+                          ? Colors.white.withAlpha(25)
+                          : Colors.white.withAlpha(128),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: AdWidget(ad: _bannerAd!),
+                    ),
+                  ),
+                ),
+              
               const SizedBox(height: 24),
             ],
           ),

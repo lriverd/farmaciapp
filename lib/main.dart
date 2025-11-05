@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'services/storage_service.dart';
 import 'services/theme_service.dart';
+import 'services/ad_service.dart';
 import 'theme/app_theme.dart';
 import 'screens/home_screen.dart';
 
@@ -14,6 +15,9 @@ void main() async {
   // Inicializar servicio de tema
   final themeService = ThemeService();
   await themeService.init();
+  
+  // Inicializar AdMob
+  await AdService.initialize();
   
   runApp(
     ChangeNotifierProvider.value(
