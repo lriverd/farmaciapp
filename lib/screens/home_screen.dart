@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 import '../services/location_service.dart';
 import '../services/farmacia_service.dart';
+import '../services/theme_service.dart';
 import '../models/farmacia_con_distancia.dart';
 import '../utils/constants.dart';
 import 'farmacia_list_screen.dart';
@@ -29,11 +31,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFE3F2FD), Color(0xFF90CAF9)],
+            colors: isDarkMode
+                ? [const Color(0xFF1A237E), const Color(0xFF0D47A1)]
+                : [const Color(0xFFE3F2FD), const Color(0xFF90CAF9)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -53,13 +59,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 Icon(
                   Icons.local_pharmacy_outlined,
                   size: 64,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: isDarkMode 
+                      ? Colors.lightBlue.shade300
+                      : Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(height: 12),
                 Text(
                   'Encuentra farmacias cercanas a ti',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : null,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -67,7 +76,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   'Las farmacias de turno están disponibles 24 horas',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey.shade600,
+                    color: isDarkMode 
+                        ? Colors.grey.shade300 
+                        : Colors.grey.shade600,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -302,21 +313,42 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      // Botón de información en la esquina superior derecha
+      // Botones en la esquina superior derecha
       Positioned(
         top: 8,
         right: 8,
-        child: IconButton(
-          icon: const Icon(Icons.info_outline),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AboutScreen(),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Botón de cambio de tema
+            IconButton(
+              icon: Icon(
+                Provider.of<ThemeService>(context).isDarkMode
+                    ? Icons.light_mode
+                    : Icons.dark_mode,
               ),
-            );
-          },
-          tooltip: 'Acerca de',
+              onPressed: () {
+                Provider.of<ThemeService>(context, listen: false).toggleTheme();
+              },
+              tooltip: Provider.of<ThemeService>(context).isDarkMode
+                  ? 'Modo claro'
+                  : 'Modo oscuro',
+            ),
+            const SizedBox(width: 4),
+            // Botón de información
+            IconButton(
+              icon: const Icon(Icons.info_outline),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AboutScreen(),
+                  ),
+                );
+              },
+              tooltip: 'Acerca de',
+            ),
+          ],
         ),
       ),
     ],
