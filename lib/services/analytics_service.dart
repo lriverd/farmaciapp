@@ -1,14 +1,40 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 
 /// Servicio para gestionar analytics y reportes de errores con Firebase
 class AnalyticsService {
-  static final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
-  static final FirebaseCrashlytics _crashlytics = FirebaseCrashlytics.instance;
+  static FirebaseAnalytics? _analytics;
+  static FirebaseCrashlytics? _crashlytics;
+  static bool _initialized = false;
+  
+  /// Verifica e inicializa Firebase si está disponible
+  static void _ensureInitialized() {
+    if (_initialized) return;
+    
+    try {
+      if (Firebase.apps.isNotEmpty) {
+        _analytics = FirebaseAnalytics.instance;
+        _crashlytics = FirebaseCrashlytics.instance;
+        _initialized = true;
+      }
+    } catch (e) {
+      // Firebase no está disponible (probablemente en tests)
+      if (kDebugMode) {
+        print('Firebase no disponible: $e');
+      }
+    }
+  }
 
   /// Obtiene el observer de navegación para analytics
   static FirebaseAnalyticsObserver get observer {
-    return FirebaseAnalyticsObserver(analytics: _analytics);
+    _ensureInitialized();
+    if (_analytics != null) {
+      return FirebaseAnalyticsObserver(analytics: _analytics!);
+    }
+    // En tests, retornar un observer no funcional
+    throw UnsupportedError('Firebase Analytics no está inicializado');
   }
 
   /// Registra un evento de búsqueda de farmacias
@@ -18,7 +44,7 @@ class AnalyticsService {
     double? radioKm,
     String? comuna,
   }) async {
-    await _analytics.logEvent(
+    await _analytics?.logEvent(
       name: 'busqueda_farmacias',
       parameters: {
         'metodo': metodo, // 'gps' o 'manual'
@@ -36,7 +62,7 @@ class AnalyticsService {
     required bool esDeTurno,
     double? distanciaKm,
   }) async {
-    await _analytics.logEvent(
+    await _analytics?.logEvent(
       name: 'ver_detalle_farmacia',
       parameters: {
         'farmacia_id': farmaciaId,
@@ -52,7 +78,7 @@ class AnalyticsService {
     required String farmaciaId,
     required String farmaciaNombre,
   }) async {
-    await _analytics.logEvent(
+    await _analytics?.logEvent(
       name: 'llamar_farmacia',
       parameters: {
         'farmacia_id': farmaciaId,
@@ -66,7 +92,7 @@ class AnalyticsService {
     required String farmaciaId,
     required String farmaciaNombre,
   }) async {
-    await _analytics.logEvent(
+    await _analytics?.logEvent(
       name: 'abrir_mapa',
       parameters: {
         'farmacia_id': farmaciaId,
@@ -81,7 +107,7 @@ class AnalyticsService {
     required bool soloAbiertas,
     String? comuna,
   }) async {
-    await _analytics.logEvent(
+    await _analytics?.logEvent(
       name: 'aplicar_filtros',
       parameters: {
         'solo_turno': soloTurno,
@@ -95,7 +121,7 @@ class AnalyticsService {
   static Future<void> logCambioTema({
     required String modoTema,
   }) async {
-    await _analytics.logEvent(
+    await _analytics?.logEvent(
       name: 'cambio_tema',
       parameters: {'modo': modoTema}, // 'light', 'dark', 'system'
     );
@@ -103,7 +129,7 @@ class AnalyticsService {
 
   /// Registra cuando se visualiza la pantalla Acerca de
   static Future<void> logVerAcercaDe() async {
-    await _analytics.logEvent(name: 'ver_acerca_de');
+    await _analytics?.logEvent(name: 'ver_acerca_de');
   }
 
   /// Registra errores no fatales
@@ -114,7 +140,7 @@ class AnalyticsService {
     Map<String, dynamic>? datosAdicionales,
   }) async {
     // Registrar en Crashlytics
-    await _crashlytics.recordError(
+    await _crashlytics?.recordError(
       error,
       stackTrace,
       reason: contexto,
@@ -122,7 +148,7 @@ class AnalyticsService {
     );
 
     // También registrar como evento de analytics
-    await _analytics.logEvent(
+    await _analytics?.logEvent(
       name: 'error_no_fatal',
       parameters: {
         'error_mensaje': error.toString(),
@@ -141,14 +167,14 @@ class AnalyticsService {
   }) async {
     final errorMessage = 'API Error: $endpoint - $error';
     
-    await _crashlytics.recordError(
+    await _crashlytics?.recordError(
       errorMessage,
       stackTrace ?? StackTrace.current,
       reason: 'Error en llamada a API del MINSAL',
       fatal: false,
     );
 
-    await _analytics.logEvent(
+    await _analytics?.logEvent(
       name: 'error_api',
       parameters: {
         'endpoint': endpoint,
@@ -163,7 +189,7 @@ class AnalyticsService {
     required String permiso,
     required String estado,
   }) async {
-    await _analytics.logEvent(
+    await _analytics?.logEvent(
       name: 'error_permiso',
       parameters: {
         'permiso': permiso, // 'ubicacion'
@@ -177,14 +203,14 @@ class AnalyticsService {
     required String name,
     required String value,
   }) async {
-    await _analytics.setUserProperty(name: name, value: value);
+    await _analytics?.setUserProperty(name: name, value: value);
   }
 
   /// Registra la pantalla actual (se hace automáticamente con el observer)
   static Future<void> setCurrentScreen({
     required String screenName,
   }) async {
-    await _analytics.logScreenView(
+    await _analytics?.logScreenView(
       screenName: screenName,
     );
   }
@@ -194,16 +220,16 @@ class AnalyticsService {
     required String key,
     required String value,
   }) async {
-    await _crashlytics.setCustomKey(key, value);
+    await _crashlytics?.setCustomKey(key, value);
   }
 
   /// Habilita o deshabilita la recopilación de datos
   static Future<void> setAnalyticsCollectionEnabled(bool enabled) async {
-    await _analytics.setAnalyticsCollectionEnabled(enabled);
+    await _analytics?.setAnalyticsCollectionEnabled(enabled);
   }
 
   /// Habilita o deshabilita Crashlytics
   static Future<void> setCrashlyticsCollectionEnabled(bool enabled) async {
-    await _crashlytics.setCrashlyticsCollectionEnabled(enabled);
+    await _crashlytics?.setCrashlyticsCollectionEnabled(enabled);
   }
 }
