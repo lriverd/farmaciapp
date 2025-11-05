@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "125575787097",
+    "project_id": "farmaciaap-a19a1",
+    "storage_bucket": "farmaciaap-a19a1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:125575787097:android:44d833225c0245d9057748",
+        "android_client_info": {
+          "package_name": "cl.duamit.farmaciaap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDf3aRzJeatsPVOyJhXbqqh8dZDKXa6WW0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

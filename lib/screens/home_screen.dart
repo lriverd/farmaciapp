@@ -6,6 +6,7 @@ import '../services/location_service.dart';
 import '../services/farmacia_service.dart';
 import '../services/theme_service.dart';
 import '../services/ad_service.dart';
+import '../services/analytics_service.dart';
 import '../models/farmacia_con_distancia.dart';
 import '../utils/constants.dart';
 import 'farmacia_list_screen.dart';
@@ -33,6 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadBannerAd();
+    
+    // Registrar vista de pantalla
+    AnalyticsService.setCurrentScreen(screenName: 'HomeScreen');
   }
 
   /// Carga el anuncio banner
@@ -48,6 +52,13 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _isBannerAdLoaded = false;
         });
+        
+        // Registrar error de carga de anuncio
+        AnalyticsService.logError(
+          error: 'Error cargando banner ad: ${error.message}',
+          stackTrace: StackTrace.current,
+          contexto: 'HomeScreen - Banner Ad',
+        );
       },
     );
     
@@ -380,8 +391,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     ? Icons.light_mode
                     : Icons.dark_mode,
               ),
-              onPressed: () {
-                Provider.of<ThemeService>(context, listen: false).toggleTheme();
+              onPressed: () async {
+                final themeService = Provider.of<ThemeService>(context, listen: false);
+                final nuevoModo = themeService.isDarkMode ? 'light' : 'dark';
+                
+                await themeService.toggleTheme();
+                
+                // Registrar cambio de tema
+                await AnalyticsService.logCambioTema(modoTema: nuevoModo);
               },
               tooltip: Provider.of<ThemeService>(context).isDarkMode
                   ? 'Modo claro'
@@ -392,6 +409,8 @@ class _HomeScreenState extends State<HomeScreen> {
             IconButton(
               icon: const Icon(Icons.info_outline),
               onPressed: () {
+                // Registrar vista de Acerca de
+                AnalyticsService.logVerAcercaDe();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -465,6 +484,13 @@ class _HomeScreenState extends State<HomeScreen> {
           radius: _selectedRadius,
           userPosition: position,
         );
+        
+        // Registrar búsqueda por GPS
+        await AnalyticsService.logBusquedaFarmacias(
+          metodo: 'gps',
+          resultados: farmaciasCercanas.length,
+          radioKm: _selectedRadius,
+        );
       } else {
         // Búsqueda por localidad escrita
         final localidad = _localidadController.text.trim();
@@ -479,6 +505,13 @@ class _HomeScreenState extends State<HomeScreen> {
         // Buscar farmacias por localidad
         farmaciasCercanas = await FarmaciaService.getFarmaciasPorLocalidad(
           localidad: localidad,
+        );
+        
+        // Registrar búsqueda manual
+        await AnalyticsService.logBusquedaFarmacias(
+          metodo: 'manual',
+          resultados: farmaciasCercanas.length,
+          comuna: localidad,
         );
         
         position = null; // No hay posición del usuario en este caso
@@ -499,6 +532,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
     } catch (e) {
       if (!mounted) return;
+      
+      // Registrar error
+      await AnalyticsService.logError(
+        error: e.toString(),
+        stackTrace: StackTrace.current,
+        contexto: 'Búsqueda de farmacias',
+        datosAdicionales: {
+          'metodo': _useGeolocation ? 'gps' : 'manual',
+          if (!_useGeolocation) 'localidad': _localidadController.text,
+        },
+      );
+      
       setState(() {
         _errorMessage = 'Error al buscar farmacias: ${e.toString()}';
       });
