@@ -52,6 +52,8 @@ class FarmaciaService {
       });
 
       return farmaciasCercanas;
+    } on ApiException catch (e) {
+      throw FarmaciaServiceException(_getUserFriendlyMessage(e.message));
     } catch (e) {
       if (e is FarmaciaServiceException) rethrow;
       throw FarmaciaServiceException('Error al obtener farmacias cercanas: ${e.toString()}');
@@ -104,10 +106,42 @@ class FarmaciaService {
       });
 
       return farmaciasEncontradas;
+    } on ApiException catch (e) {
+      throw FarmaciaServiceException(_getUserFriendlyMessage(e.message));
     } catch (e) {
       if (e is FarmaciaServiceException) rethrow;
       throw FarmaciaServiceException('Error al buscar farmacias por localidad: ${e.toString()}');
     }
+  }
+
+  /// Convierte mensajes técnicos en mensajes amigables para el usuario
+  static String _getUserFriendlyMessage(String technicalMessage) {
+    if (technicalMessage.contains('conexión segura') ||
+        technicalMessage.contains('fecha y hora')) {
+      return 'Error de conexión segura.\n\n'
+          'Posibles soluciones:\n'
+          '• Verifique que la fecha y hora de su dispositivo sean correctas\n'
+          '• Actualice su sistema operativo si es posible\n'
+          '• Intente conectarse desde otra red WiFi';
+    }
+    
+    if (technicalMessage.contains('Sin conexión') || 
+        technicalMessage.contains('internet')) {
+      return 'Sin conexión a internet.\n'
+          'Verifique su conexión y vuelva a intentar.';
+    }
+    
+    if (technicalMessage.contains('Tiempo de espera')) {
+      return 'El servidor tardó demasiado en responder.\n'
+          'Intente nuevamente en unos momentos.';
+    }
+    
+    if (technicalMessage.contains('Error del servidor')) {
+      return 'El servidor está experimentando problemas.\n'
+          'Intente nuevamente más tarde.';
+    }
+    
+    return technicalMessage;
   }
 
   /// Filtra farmacias según los criterios especificados

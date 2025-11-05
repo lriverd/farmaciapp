@@ -55,8 +55,7 @@
   <rect x="412" y="240" width="200" height="180" rx="55" fill="white" opacity="0.25"/>
   <rect x="240" y="412" width="544" height="80" rx="55" fill="white" opacity="0.2"/>
   
-  <!-- Bandera de Chile en la esquina superior derecha con sombra -->
-  <g transform="translate(650, 180)" filter="url(#flagShadow)">
+  <g transform="translate(412, 440)" filter="url(#flagShadow)">
     <!-- Fondo de la bandera con todas las esquinas redondeadas -->
     <rect x="0" y="0" width="200" height="150" rx="15" fill="transparent"/>
     
