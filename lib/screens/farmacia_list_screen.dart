@@ -276,106 +276,108 @@ class _FarmaciaListScreenState extends State<FarmaciaListScreen> {
       context: context,
       isScrollControlled: true,
       builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Filtros',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
+        builder: (context, setModalState) => SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Filtros',
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        setModalState(() {
-                          _soloTurno = false;
-                          _comunaSeleccionada = null;
-                          _regionSeleccionada = null;
-                        });
-                      },
-                      child: const Text('Limpiar'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-
-                // Filtro solo de turno
-                SwitchListTile(
-                  title: const Text('Solo farmacias de turno'),
-                  subtitle: const Text('Mostrar únicamente farmacias abiertas 24 horas'),
-                  value: _soloTurno,
-                  onChanged: (value) {
-                    setModalState(() {
-                      _soloTurno = value;
-                    });
-                  },
-                ),
-                
-                // Filtro solo abiertas
-                SwitchListTile(
-                  title: const Text('Solo farmacias abiertas'),
-                  subtitle: const Text('Mostrar únicamente farmacias abiertas en este momento'),
-                  value: _soloAbiertas,
-                  onChanged: (value) {
-                    setModalState(() {
-                      _soloAbiertas = value;
-                    });
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // Filtro por comuna
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    labelText: 'Comuna',
-                    hintText: 'Seleccionar comuna',
-                  ),
-                  value: _comunaSeleccionada,
-                  items: [
-                    const DropdownMenuItem<String>(
-                      value: null,
-                      child: Text('Todas las comunas'),
-                    ),
-                    ..._comunasDisponibles.map((comuna) =>
-                      DropdownMenuItem<String>(
-                        value: comuna,
-                        child: Text(comuna),
+                      TextButton(
+                        onPressed: () {
+                          setModalState(() {
+                            _soloTurno = false;
+                            _comunaSeleccionada = null;
+                            _regionSeleccionada = null;
+                          });
+                        },
+                        child: const Text('Limpiar'),
                       ),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    setModalState(() {
-                      _comunaSeleccionada = value;
-                    });
-                  },
-                ),
-                const SizedBox(height: 32),
-
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      // Los filtros ya están actualizados en las variables
-                    });
-                    _aplicarFiltros();
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Colors.white,
+                    ],
                   ),
-                  child: const Text('Aplicar filtros'),
-                ),
-              ],
+                  const SizedBox(height: 24),
+
+                  // Filtro solo de turno
+                  SwitchListTile(
+                    title: const Text('Solo farmacias de turno'),
+                    subtitle: const Text('Mostrar únicamente farmacias abiertas 24 horas'),
+                    value: _soloTurno,
+                    onChanged: (value) {
+                      setModalState(() {
+                        _soloTurno = value;
+                      });
+                    },
+                  ),
+                  
+                  // Filtro solo abiertas
+                  SwitchListTile(
+                    title: const Text('Solo farmacias abiertas'),
+                    subtitle: const Text('Mostrar únicamente farmacias abiertas en este momento'),
+                    value: _soloAbiertas,
+                    onChanged: (value) {
+                      setModalState(() {
+                        _soloAbiertas = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Filtro por comuna
+                  DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      labelText: 'Comuna',
+                      hintText: 'Seleccionar comuna',
+                    ),
+                    value: _comunaSeleccionada,
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: null,
+                        child: Text('Todas las comunas'),
+                      ),
+                      ..._comunasDisponibles.map((comuna) =>
+                        DropdownMenuItem<String>(
+                          value: comuna,
+                          child: Text(comuna),
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setModalState(() {
+                        _comunaSeleccionada = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 32),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        // Los filtros ya están actualizados en las variables
+                      });
+                      _aplicarFiltros();
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Aplicar filtros'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
