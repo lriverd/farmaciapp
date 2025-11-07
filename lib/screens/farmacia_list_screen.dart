@@ -139,7 +139,7 @@ class _FarmaciaListScreenState extends State<FarmaciaListScreen> {
 
     return Scaffold(
       backgroundColor: themeService.isDarkMode 
-          ? Color(0xFF1A237E)
+          ? Colors.grey.shade900
           : Colors.grey.shade50,
       appBar: AppBar(
         title: const Text('Farmacias Cercanas'),

@@ -123,7 +123,7 @@ class _FarmaciaDetailScreenState extends State<FarmaciaDetailScreen> {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Icon(
@@ -147,7 +147,7 @@ class _FarmaciaDetailScreenState extends State<FarmaciaDetailScreen> {
 
             // Información de contacto y ubicación
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 children: [
                   _buildInfoCard(
@@ -168,31 +168,26 @@ class _FarmaciaDetailScreenState extends State<FarmaciaDetailScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
 
                   _buildInfoCard(
                     context,
-                    'Horarios',
+                    'Horario',
                     [
                       if (widget.farmaciaConDistancia.esDeTurno)
                         _buildInfoRow(
                           Icons.access_time,
-                          'Estado',
+                          'En turno',
                           'Abierta 24 horas',
                           textColor: AppTheme.accentColor,
-                        )
-                      else ...[
+                        ),
+                        
                         _buildInfoRow(
                           Icons.schedule,
                           'Atención',
-                          '${_formatTime(farmacia.funcionamientoHoraApertura)} - ${_formatTime(farmacia.funcionamientoHoraCierre)}',
+                          '${_capitalizarPrimeraLetra(farmacia.funcionamientoDia)} (${_formatTime(farmacia.funcionamientoHoraApertura)} - ${_formatTime(farmacia.funcionamientoHoraCierre)})',
                         ),
-                      ],
-                      _buildInfoRow(
-                        Icons.today_outlined,
-                        'Día',
-                        _capitalizarPrimeraLetra(farmacia.funcionamientoDia),
-                      ),
+                      
                     ],
                   ),
                 ],
@@ -205,11 +200,11 @@ class _FarmaciaDetailScreenState extends State<FarmaciaDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  ElevatedButton.icon(
+                  OutlinedButton.icon(
                     onPressed: () => _abrirEnGoogleMaps(),
                     icon: const Icon(Icons.directions),
                     label: const Text('Cómo llegar'),
-                    style: ElevatedButton.styleFrom(
+                    style: OutlinedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -404,8 +399,7 @@ ${farmacia.comunaNombre}
 
 ${widget.farmaciaConDistancia.esDeTurno ? 'Farmacia de turno - Abierta 24 horas' : 'Horario: ${_formatTime(farmacia.funcionamientoHoraApertura)} - ${_formatTime(farmacia.funcionamientoHoraCierre)}'}
 
-Distancia: ${widget.farmaciaConDistancia.distanciaFormateada}
-${farmacia.localTelefono.isNotEmpty ? 'Teléfono: ${farmacia.localTelefono}' : ''}
+${_isValidPhoneNumber(farmacia.localTelefono) ? 'Teléfono: ${farmacia.localTelefono}' : ''}
 
 Ubicación: https://maps.google.com/?q=${farmacia.localLat},${farmacia.localLng}
 ''';

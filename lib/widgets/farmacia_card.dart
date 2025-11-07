@@ -38,7 +38,7 @@ class FarmaciaCard extends StatelessWidget {
                       farmacia.localNombre,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: AppTheme.accentColor,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ),

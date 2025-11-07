@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.fromLTRB(8, 24, 8, 24),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -110,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 12),
                       Text(
                         'Encuentra farmacias cercanas a ti',
-                        style: Theme.of(context).textTheme.headlineSmall
+                        style: Theme.of(context).textTheme.headlineMedium
                             ?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: isDarkMode ? Colors.white : null,
@@ -205,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     });
                                   },
                                 ),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 8),
                               ],
                             ],
                           ),
