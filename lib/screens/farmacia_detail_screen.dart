@@ -116,19 +116,12 @@ class FarmaciaDetailScreen extends StatelessWidget {
                         Icons.location_on_outlined,
                         'Dirección',
                         farmacia.localDireccion,
-                        onTap: () => _copiarAlPortapapeles(context, farmacia.localDireccion),
+                        onTap: () => _copiarAlPortapapeles(context, '${farmacia.localDireccion}, ${farmacia.comunaNombre}'),
                       ),
                       _buildInfoRow(
                         Icons.place_outlined,
                         'Comuna',
                         farmacia.comunaNombre,
-                      ),
-                      _buildInfoRow(
-                        Icons.map_outlined,
-                        'Localidad',
-                        farmacia.localidadNombre.isNotEmpty 
-                            ? farmacia.localidadNombre 
-                            : farmacia.comunaNombre,
                       ),
                     ],
                   ),
@@ -149,13 +142,8 @@ class FarmaciaDetailScreen extends StatelessWidget {
                       else ...[
                         _buildInfoRow(
                           Icons.schedule,
-                          'Apertura',
-                          _formatTime(farmacia.funcionamientoHoraApertura),
-                        ),
-                        _buildInfoRow(
-                          Icons.schedule_outlined,
-                          'Cierre',
-                          _formatTime(farmacia.funcionamientoHoraCierre),
+                          'Atención',
+                          '${_formatTime(farmacia.funcionamientoHoraApertura)} - ${_formatTime(farmacia.funcionamientoHoraCierre)}',
                         ),
                       ],
                       _buildInfoRow(
@@ -165,22 +153,6 @@ class FarmaciaDetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-
-                  if (farmacia.localTelefono.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    _buildInfoCard(
-                      context,
-                      'Contacto',
-                      [
-                        _buildInfoRow(
-                          Icons.phone_outlined,
-                          'Teléfono',
-                          farmacia.localTelefono,
-                          onTap: () => _llamar(farmacia.localTelefono),
-                        ),
-                      ],
-                    ),
-                  ],
                 ],
               ),
             ),
@@ -202,7 +174,7 @@ class FarmaciaDetailScreen extends StatelessWidget {
                     ),
                   ),
 
-                  if (farmacia.localTelefono.isNotEmpty) ...[
+                  if (_isValidPhoneNumber(farmacia.localTelefono)) ...[
                     const SizedBox(height: 12),
                     OutlinedButton.icon(
                       onPressed: () => _llamar(farmacia.localTelefono),
@@ -225,7 +197,7 @@ class FarmaciaDetailScreen extends StatelessWidget {
   Widget _buildInfoCard(BuildContext context, String titulo, List<Widget> items) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -235,7 +207,7 @@ class FarmaciaDetailScreen extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
             ...items,
           ],
         ),
@@ -316,6 +288,12 @@ class FarmaciaDetailScreen extends StatelessWidget {
   String _capitalizarPrimeraLetra(String texto) {
     if (texto.isEmpty) return texto;
     return texto[0].toUpperCase() + texto.substring(1);
+  }
+  
+  bool _isValidPhoneNumber(String telefono) {
+    if (telefono.isEmpty) return false;
+    final regex = RegExp(r'^\+56\d{4,}$');
+    return regex.hasMatch(telefono);
   }
 
   Future<void> _abrirEnGoogleMaps() async {
