@@ -6,20 +6,22 @@ import '../utils/horario_utils.dart';
 class FarmaciaCard extends StatelessWidget {
   final FarmaciaConDistancia farmaciaConDistancia;
   final VoidCallback onTap;
+  final VoidCallback? onMapTap;
 
   const FarmaciaCard({
     super.key,
     required this.farmaciaConDistancia,
     required this.onTap,
+    this.onMapTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final farmacia = farmaciaConDistancia.farmacia;
-    
+
     return Card(
-      color: AppTheme.secondaryColor,
-      shadowColor: AppTheme.primaryColor.withOpacity(0.08),
+      color: Theme.of(context).cardColor,
+      shadowColor: Theme.of(context).shadowColor,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -72,7 +74,7 @@ class FarmaciaCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              
+
               // Dirección
               Row(
                 children: [
@@ -90,10 +92,25 @@ class FarmaciaCard extends StatelessWidget {
                       ),
                     ),
                   ),
+
+                  Icon(
+                    Icons.location_on,
+                    size: 12,
+                    color: AppTheme.primaryColor,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    farmaciaConDistancia.distanciaFormateada,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.primaryColor,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 4),
-              
+
               // Comuna
               Row(
                 children: [
@@ -111,49 +128,16 @@ class FarmaciaCard extends StatelessWidget {
                   ),
                 ],
               ),
-              
-              // Estado (Abierto/Cerrado/24hrs)
-              const SizedBox(height: 8),
-              _buildEstadoChip(),
-              
-              const SizedBox(height: 12),
-              
-              // Footer con distancia y horario
+
+              // Horario
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Distancia
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.near_me_outlined,
-                          size: 12,
-                          color: AppTheme.primaryColor,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          farmaciaConDistancia.distanciaFormateada,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: AppTheme.primaryColor,
-                          ),
-                        ),
-                      ],
-                    ),
+                  Icon(
+                    Icons.access_time_outlined,
+                    size: 16,
+                    color: Colors.grey.shade600,
                   ),
-                  
-                  // Horario
+                  const SizedBox(width: 4),
                   Text(
                     HorarioUtils.formatearHorario(
                       esDeTurno: farmaciaConDistancia.esDeTurno,
@@ -162,9 +146,30 @@ class FarmaciaCard extends StatelessWidget {
                     ),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.grey.shade600,
-                      fontWeight: FontWeight.w500,
                     ),
                   ),
+                ],
+              ),
+
+              // Estado (Abierto/Cerrado/24hrs)
+              const SizedBox(height: 8),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildEstadoChip(),
+                  // Botón "Cómo llegar"
+                  if (onMapTap != null)
+                    TextButton.icon(
+                      onPressed: onMapTap,
+                      icon: const Icon(Icons.directions, size: 16),
+                      label: const Text('Cómo llegar'),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
                 ],
               ),
             ],
@@ -181,7 +186,7 @@ class FarmaciaCard extends StatelessWidget {
       horaApertura: farmacia.funcionamientoHoraApertura,
       horaCierre: farmacia.funcionamientoHoraCierre,
     );
-    
+
     final estado = HorarioUtils.obtenerEstado(
       esDeTurno: farmaciaConDistancia.esDeTurno,
       horaApertura: farmacia.funcionamientoHoraApertura,

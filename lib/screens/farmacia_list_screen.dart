@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/farmacia_con_distancia.dart';
 import '../services/farmacia_service.dart';
+import '../services/theme_service.dart';
 import '../utils/horario_utils.dart';
 import '../widgets/farmacia_card.dart';
 import '../widgets/loading_widget.dart';
@@ -132,8 +135,12 @@ class _FarmaciaListScreenState extends State<FarmaciaListScreen> {
   Widget build(BuildContext context) {
     final totalFarmacias = widget.farmaciasCercanas.length;
     final farmaciasTurno = widget.farmaciasCercanas.where((f) => f.esDeTurno).length;
+    final themeService = Provider.of<ThemeService>(context);
 
     return Scaffold(
+      backgroundColor: themeService.isDarkMode 
+          ? Color(0xFF1A237E)
+          : Colors.grey.shade50,
       appBar: AppBar(
         title: const Text('Farmacias Cercanas'),
         actions: [
@@ -237,6 +244,7 @@ class _FarmaciaListScreenState extends State<FarmaciaListScreen> {
                             return FarmaciaCard(
                               farmaciaConDistancia: farmaciaConDistancia,
                               onTap: () => _navegarADetalle(farmaciaConDistancia),
+                              onMapTap: () => _abrirEnGoogleMaps(farmaciaConDistancia),
                             );
                           },
                         ),
@@ -383,6 +391,30 @@ class _FarmaciaListScreenState extends State<FarmaciaListScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _abrirEnGoogleMaps(FarmaciaConDistancia farmaciaConDistancia) async {
+    final farmacia = farmaciaConDistancia.farmacia;
+    final url = 'https://www.google.com/maps/dir/?api=1&destination=${farmacia.localLat},${farmacia.localLng}&travelmode=driving';
+    
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      // Si falla, intentar abrir la aplicación de Google Maps directamente
+      final googleMapsUrl = 'google.navigation:q=${farmacia.localLat},${farmacia.localLng}';
+      try {
+        final uri = Uri.parse(googleMapsUrl);
+        await launchUrl(uri);
+      } catch (e) {
+        // Como último recurso, abrir en el navegador
+        final webUrl = 'https://maps.google.com/?q=${farmacia.localLat},${farmacia.localLng}';
+        final uri = Uri.parse(webUrl);
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    }
   }
 
   void _navegarADetalle(FarmaciaConDistancia farmaciaConDistancia) {

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../models/farmacia_con_distancia.dart';
 import '../theme/app_theme.dart';
+import '../services/ad_service.dart';
+import '../services/analytics_service.dart';
 
-class FarmaciaDetailScreen extends StatelessWidget {
+class FarmaciaDetailScreen extends StatefulWidget {
   final FarmaciaConDistancia farmaciaConDistancia;
   final Position? userPosition;
 
@@ -16,8 +19,47 @@ class FarmaciaDetailScreen extends StatelessWidget {
   });
 
   @override
+  State<FarmaciaDetailScreen> createState() => _FarmaciaDetailScreenState();
+}
+
+class _FarmaciaDetailScreenState extends State<FarmaciaDetailScreen> {
+  BannerAd? _bannerAd;
+  bool _isBannerAdLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBannerAd();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
+
+  void _loadBannerAd() {
+    _bannerAd = AdService.createBannerAd(
+      onAdLoaded: (ad) {
+        setState(() {
+          _isBannerAdLoaded = true;
+        });
+      },
+      onAdFailedToLoad: (ad, error) {
+        ad.dispose();
+        AnalyticsService.logError(
+          error: 'Error al cargar banner en detalle',
+          stackTrace: StackTrace.current,
+          contexto: 'FarmaciaDetailScreen',
+        );
+      },
+    );
+    _bannerAd?.load();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final farmacia = farmaciaConDistancia.farmacia;
+    final farmacia = widget.farmaciaConDistancia.farmacia;
 
     return Scaffold(
       appBar: AppBar(
@@ -60,7 +102,7 @@ class FarmaciaDetailScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (farmaciaConDistancia.esDeTurno)
+                      if (widget.farmaciaConDistancia.esDeTurno)
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -91,7 +133,7 @@ class FarmaciaDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'A ${farmaciaConDistancia.distanciaFormateada} de distancia',
+                        'A ${widget.farmaciaConDistancia.distanciaFormateada} de distancia',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.w600,
@@ -132,7 +174,7 @@ class FarmaciaDetailScreen extends StatelessWidget {
                     context,
                     'Horarios',
                     [
-                      if (farmaciaConDistancia.esDeTurno)
+                      if (widget.farmaciaConDistancia.esDeTurno)
                         _buildInfoRow(
                           Icons.access_time,
                           'Estado',
@@ -188,6 +230,15 @@ class FarmaciaDetailScreen extends StatelessWidget {
                 ],
               ),
             ),
+
+            // Banner publicitario
+            if (_isBannerAdLoaded && _bannerAd != null)
+              Container(
+                alignment: Alignment.center,
+                width: double.infinity,
+                height: 60,
+                child: AdWidget(ad: _bannerAd!),
+              ),
           ],
         ),
       ),
@@ -297,7 +348,7 @@ class FarmaciaDetailScreen extends StatelessWidget {
   }
 
   Future<void> _abrirEnGoogleMaps() async {
-    final farmacia = farmaciaConDistancia.farmacia;
+    final farmacia = widget.farmaciaConDistancia.farmacia;
     final url = 'https://www.google.com/maps/dir/?api=1&destination=${farmacia.localLat},${farmacia.localLng}&travelmode=driving';
     
     try {
@@ -345,15 +396,15 @@ class FarmaciaDetailScreen extends StatelessWidget {
   }
 
   void _compartir(BuildContext context) {
-    final farmacia = farmaciaConDistancia.farmacia;
+    final farmacia = widget.farmaciaConDistancia.farmacia;
     final texto = '''
 ${farmacia.localNombre}
 ${farmacia.localDireccion}
 ${farmacia.comunaNombre}
 
-${farmaciaConDistancia.esDeTurno ? 'Farmacia de turno - Abierta 24 horas' : 'Horario: ${_formatTime(farmacia.funcionamientoHoraApertura)} - ${_formatTime(farmacia.funcionamientoHoraCierre)}'}
+${widget.farmaciaConDistancia.esDeTurno ? 'Farmacia de turno - Abierta 24 horas' : 'Horario: ${_formatTime(farmacia.funcionamientoHoraApertura)} - ${_formatTime(farmacia.funcionamientoHoraCierre)}'}
 
-Distancia: ${farmaciaConDistancia.distanciaFormateada}
+Distancia: ${widget.farmaciaConDistancia.distanciaFormateada}
 ${farmacia.localTelefono.isNotEmpty ? 'Teléfono: ${farmacia.localTelefono}' : ''}
 
 Ubicación: https://maps.google.com/?q=${farmacia.localLat},${farmacia.localLng}
