@@ -20,7 +20,6 @@ class FarmaciaCard extends StatelessWidget {
     final farmacia = farmaciaConDistancia.farmacia;
 
     return Card(
-      color: Theme.of(context).cardColor,
       shadowColor: Theme.of(context).shadowColor,
       child: InkWell(
         onTap: onTap,
@@ -81,15 +80,13 @@ class FarmaciaCard extends StatelessWidget {
                   Icon(
                     Icons.location_on_outlined,
                     size: 16,
-                    color: Colors.grey.shade600,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
                       farmacia.localDireccion,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey.shade600,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
 
@@ -117,14 +114,12 @@ class FarmaciaCard extends StatelessWidget {
                   Icon(
                     Icons.place_outlined,
                     size: 16,
-                    color: Colors.grey.shade600,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     farmacia.comunaNombre,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey.shade600,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
               ),
@@ -135,7 +130,7 @@ class FarmaciaCard extends StatelessWidget {
                   Icon(
                     Icons.access_time_outlined,
                     size: 16,
-                    color: Colors.grey.shade600,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(width: 4),
                   Text(
@@ -144,9 +139,7 @@ class FarmaciaCard extends StatelessWidget {
                       horaApertura: farmacia.funcionamientoHoraApertura,
                       horaCierre: farmacia.funcionamientoHoraCierre,
                     ),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey.shade600,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
               ),

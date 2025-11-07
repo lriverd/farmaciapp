@@ -341,6 +341,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   label: Text(
                     _isLoading ? 'Buscando...' : 'Buscar farmacias cercanas',
                     style: const TextStyle(
+                      inherit: false,
+                      color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
