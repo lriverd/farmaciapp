@@ -572,6 +572,7 @@ class _HomeScreenState extends State<HomeScreen> {
             farmaciasCercanas: farmaciasCercanas,
             userPosition: position,
             radius: _selectedRadius,
+            localidad: _useGeolocation ? null : _localidadController.text.trim(),
           ),
         ),
       );

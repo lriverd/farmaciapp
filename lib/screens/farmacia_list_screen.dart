@@ -18,12 +18,14 @@ class FarmaciaListScreen extends StatefulWidget {
   final List<FarmaciaConDistancia> farmaciasCercanas;
   final Position? userPosition;
   final double radius;
+  final String? localidad;
 
   const FarmaciaListScreen({
     super.key,
     required this.farmaciasCercanas,
     this.userPosition,
     required this.radius,
+    this.localidad,
   });
 
   @override
@@ -33,7 +35,7 @@ class FarmaciaListScreen extends StatefulWidget {
 class _FarmaciaListScreenState extends State<FarmaciaListScreen> {
   List<FarmaciaConDistancia> _farmaciasFiltradas = [];
   bool _soloTurno = false;
-  bool _soloAbiertas = false;
+  bool _soloAbiertas = true; // Activado por defecto
   String? _comunaSeleccionada;
   String? _regionSeleccionada;
   String _busquedaNombre = '';
@@ -63,8 +65,19 @@ class _FarmaciaListScreenState extends State<FarmaciaListScreen> {
   }
 
   void _initializarDatos() {
-    _farmaciasFiltradas = widget.farmaciasCercanas;
+    // Ordenar farmacias: si hay posición del usuario, ordenar por distancia
+    // Si no hay posición, mantener orden original (turno primero)
+    if (widget.userPosition != null) {
+      _farmaciasFiltradas = List.from(widget.farmaciasCercanas)
+        ..sort((a, b) => a.distancia.compareTo(b.distancia));
+    } else {
+      _farmaciasFiltradas = widget.farmaciasCercanas;
+    }
+    
     _comunasDisponibles = FarmaciaService.obtenerComunas(widget.farmaciasCercanas);
+    
+    // Aplicar filtros iniciales (incluye el filtro de solo abiertas que está activo por defecto)
+    _aplicarFiltros();
   }
 
   void _loadBannerAd() {
@@ -106,6 +119,11 @@ class _FarmaciaListScreenState extends State<FarmaciaListScreen> {
             horaCierre: farmaciaConDistancia.farmacia.funcionamientoHoraCierre,
           );
         }).toList();
+      }
+      
+      // Ordenar por distancia si hay posición del usuario
+      if (widget.userPosition != null) {
+        farmacias.sort((a, b) => a.distancia.compareTo(b.distancia));
       }
       
       _farmaciasFiltradas = farmacias;
@@ -201,9 +219,9 @@ class _FarmaciaListScreenState extends State<FarmaciaListScreen> {
                   Colors.orange,
                 ),
                 _buildEstadistica(
-                  'Radio',
-                  '${widget.radius.toInt()} km',
-                  Icons.near_me,
+                  widget.localidad != null ? 'Localidad' : 'Radio',
+                  widget.localidad ?? '${widget.radius.toInt()} km',
+                  widget.localidad != null ? Icons.location_city : Icons.near_me,
                   Colors.green,
                 ),
               ],
