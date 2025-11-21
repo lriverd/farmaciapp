@@ -809,7 +809,7 @@ void _onSearchChanged(String query) {
 #### 1. API Keys
 ```dart
 // NO hacer esto:
-const apiKey = 'AIzaSyDf3aRzJeatsPVOyJhXbqqh8dZDKXa6WW0';
+const apiKey = 'asdfAsdfAsDfaSdf';
 
 // Mejor: Usar flutter_dotenv o compilar en build
 const String apiKey = String.fromEnvironment('GOOGLE_API_KEY');

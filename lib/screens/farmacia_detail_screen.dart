@@ -40,6 +40,7 @@ class _FarmaciaDetailScreenState extends State<FarmaciaDetailScreen> {
 
   void _loadBannerAd() {
     _bannerAd = AdService.createBannerAd(
+      location: 'detail',
       onAdLoaded: (ad) {
         setState(() {
           _isBannerAdLoaded = true;

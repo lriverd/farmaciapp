@@ -10,11 +10,23 @@ class AdService {
   /// ID de la app de AdMob para iOS
   static const String _iosAppId = 'ca-app-pub-7060454650201968~4128813276';
 
-  /// ID del banner para Android
-  static const String _androidBannerId = 'ca-app-pub-7060454650201968/4923020192';
+  /// ID del banner para Android (Home)
+  static const String _androidBannerHomeId = 'ca-app-pub-7060454650201968/4923020192';
   
-  /// ID del banner para iOS
-  static const String _iosBannerId = 'ca-app-pub-7060454650201968/4923020192';
+  /// ID del banner para iOS (Home)
+  static const String _iosBannerHomeId = 'ca-app-pub-7060454650201968/4923020192';
+  
+  /// ID del banner para Android (Lista de farmacias)
+  static const String _androidBannerListId = 'ca-app-pub-7060454650201968/3588612988';
+  
+  /// ID del banner para iOS (Lista de farmacias)
+  static const String _iosBannerListId = 'ca-app-pub-7060454650201968/3588612988';
+  
+  /// ID del banner para Android (Detalle de farmacia)
+  static const String _androidBannerDetailId = 'ca-app-pub-7060454650201968/5456228425';
+  
+  /// ID del banner para iOS (Detalle de farmacia)
+  static const String _iosBannerDetailId = 'ca-app-pub-7060454650201968/5456228425';
   
   /// ID de prueba de banner para Android
   static const String _testBannerId = 'ca-app-pub-3940256099942544/6300978111';
@@ -43,17 +55,34 @@ class AdService {
     }
   }
 
-  /// Obtiene el ID del banner según la plataforma
-  static String get bannerAdUnitId {
+  /// Obtiene el ID del banner según la plataforma y ubicación
+  /// [location] puede ser 'home', 'list' o 'detail'
+  static String getBannerAdUnitId({String location = 'home'}) {
     try {
       if (kIsWeb) {
         return _testBannerId;
       }
       
       if (Platform.isAndroid) {
-        return _androidBannerId;
+        switch (location) {
+          case 'list':
+            return _androidBannerListId;
+          case 'detail':
+            return _androidBannerDetailId;
+          case 'home':
+          default:
+            return _androidBannerHomeId;
+        }
       } else if (Platform.isIOS) {
-        return _iosBannerId;
+        switch (location) {
+          case 'list':
+            return _iosBannerListId;
+          case 'detail':
+            return _iosBannerDetailId;
+          case 'home':
+          default:
+            return _iosBannerHomeId;
+        }
       }
       throw UnsupportedError('Plataforma no soportada');
     } catch (e) {
@@ -61,14 +90,20 @@ class AdService {
       return _testBannerId;
     }
   }
+  
+  /// Obtiene el ID del banner según la plataforma (para compatibilidad)
+  /// @deprecated Usar getBannerAdUnitId con parámetro location
+  static String get bannerAdUnitId => getBannerAdUnitId();
 
   /// Crea un banner ad
+  /// [location] puede ser 'home', 'list' o 'detail'
   static BannerAd createBannerAd({
     required Function(Ad ad) onAdLoaded,
     required Function(Ad ad, LoadAdError error) onAdFailedToLoad,
+    String location = 'home',
   }) {
     return BannerAd(
-      adUnitId: bannerAdUnitId,
+      adUnitId: getBannerAdUnitId(location: location),
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/farmacia_con_distancia.dart';
+import '../services/ad_service.dart';
+import '../services/analytics_service.dart';
 import '../services/farmacia_service.dart';
 import '../services/theme_service.dart';
 import '../utils/horario_utils.dart';
@@ -40,15 +43,21 @@ class _FarmaciaListScreenState extends State<FarmaciaListScreen> {
   bool _isRefreshing = false;
   
   final TextEditingController _searchController = TextEditingController();
+  
+  // Variables para el banner
+  BannerAd? _bannerAd;
+  bool _isBannerAdLoaded = false;
 
   @override
   void initState() {
     super.initState();
     _initializarDatos();
+    _loadBannerAd();
   }
 
   @override
   void dispose() {
+    _bannerAd?.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -56,6 +65,26 @@ class _FarmaciaListScreenState extends State<FarmaciaListScreen> {
   void _initializarDatos() {
     _farmaciasFiltradas = widget.farmaciasCercanas;
     _comunasDisponibles = FarmaciaService.obtenerComunas(widget.farmaciasCercanas);
+  }
+
+  void _loadBannerAd() {
+    _bannerAd = AdService.createBannerAd(
+      location: 'list',
+      onAdLoaded: (ad) {
+        setState(() {
+          _isBannerAdLoaded = true;
+        });
+      },
+      onAdFailedToLoad: (ad, error) {
+        ad.dispose();
+        AnalyticsService.logError(
+          error: 'Error al cargar banner en lista',
+          stackTrace: StackTrace.current,
+          contexto: 'FarmaciaListScreen',
+        );
+      },
+    );
+    _bannerAd?.load();
   }
 
   void _aplicarFiltros() {
@@ -181,33 +210,88 @@ class _FarmaciaListScreenState extends State<FarmaciaListScreen> {
             ),
           ),
 
-          // Barra de búsqueda
+          // Banner publicitario
+          if (_isBannerAdLoaded && _bannerAd != null)
+            Container(
+              alignment: Alignment.center,
+              width: double.infinity,
+              height: 60,
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: AdWidget(ad: _bannerAd!),
+            ),
+
+          // Barra de búsqueda con filtros rápidos
           Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Buscar por nombre de farmacia...',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _busquedaNombre.isNotEmpty
-                    ? IconButton(
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() {
-                            _busquedaNombre = '';
-                          });
-                          _aplicarFiltros();
-                        },
-                        icon: const Icon(Icons.clear),
-                      )
-                    : null,
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _busquedaNombre = value;
-                });
-                _aplicarFiltros();
-              },
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              children: [
+                // Barra de búsqueda por nombre
+                TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Buscar por nombre de farmacia...',
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _busquedaNombre.isNotEmpty
+                        ? IconButton(
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {
+                                _busquedaNombre = '';
+                              });
+                              _aplicarFiltros();
+                            },
+                            icon: const Icon(Icons.clear),
+                          )
+                        : null,
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      _busquedaNombre = value;
+                    });
+                    _aplicarFiltros();
+                  },
+                ),
+
+                const SizedBox(height: 8),
+
+                // Filtros rápidos
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    FilterChip(
+                      avatar: Icon(
+                        Icons.store,
+                        size: 18,
+                        color: _soloAbiertas ? Colors.white : Colors.grey,
+                      ),
+                      label: const Text('Solo abiertas'),
+                      selected: _soloAbiertas,
+                      onSelected: (value) {
+                        setState(() {
+                          _soloAbiertas = value;
+                        });
+                        _aplicarFiltros();
+                      },
+                    ),
+                    FilterChip(
+                      avatar: Icon(
+                        Icons.local_pharmacy,
+                        size: 18,
+                        color: _soloTurno ? Colors.white : Colors.grey,
+                      ),
+                      label: const Text('Solo de turno'),
+                      selected: _soloTurno,
+                      onSelected: (value) {
+                        setState(() {
+                          _soloTurno = value;
+                        });
+                        _aplicarFiltros();
+                      },
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
 
